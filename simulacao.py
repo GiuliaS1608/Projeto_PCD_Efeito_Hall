@@ -1,6 +1,6 @@
 from vpython import *
 
-# Constantes físicas
+# Constantes físicas .
 q = -1.6e-19  # carga do elétron
 m = 9.11e-31  # massa do elétron
 v0 = vector(0, 0, 0)  # velocidade inicial (x)

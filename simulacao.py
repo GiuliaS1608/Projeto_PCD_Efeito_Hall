@@ -1,77 +1,141 @@
 from vpython import *
+import random
+import time
 
-# Constantes físicas
-q = -1.6e-19  # carga do elétron
-m = 9.11e-31  # massa do elétron
-v0 = vector(0, 0, 0)  # velocidade inicial (x)
-dt = 5e-3  # passo de tempo
+def simular_efeito_hall(Tensao_sensor):
 
-# Parâmetros iniciais dos campos
-E_magnitude = -1e-12
-B_magnitude = 1e-12
+    # ========== Constantes físicas ==========
+    q = -1.6e-19 # carga do elétron (C)
+    m = 9.11e-31  # massa do elétron (Kg)
+    v0 = vector(0, 0, 0)  # velocidade inicial no eixo x
+    dt = 1e-11  # passo de tempo (pequeno para alta aceleração)
+    i = 4.2e-3
 
-# Visual
-scene = canvas(title="Efeito Hall")
-bloco = box(pos=vector(0, 0, 0), size=vector(
-    4, 0.5, 1), color=color.gray(0.6), opacity=0.3)
+    # ========== Parâmetros do sensor ==========
 
-# Elétron
-e = sphere(pos=vector(-1.5, 0, 0), radius=0.05,
-           color=color.cyan, make_trail=True)
-v = v0
+    # V (tensão lida no sensor)
+    v_offset = 1.5            # V (tensão de referência do sensor)
+    s = 1.8e-3         # V/Gauss
+    w = 1e-3           # m (largura do condutor)
+    d = 1e-5           # espessura
+    sigma = 1e3        # condutividade do silício dopado (S/m)
 
-# Valores dos campos (iniciais)
-E = vector(E_magnitude, 0, 0)
-B = vector(0, B_magnitude, 0)
+    # ========== Dados coletados ==========
+    # Campos iniciais
+    Tensao_hall = Tensao_sensor - v_offset
+    B_intensidade = ((Tensao_hall / s) * 1e-4)/100  # Gauss para Tesla
 
-# Propriedades do meio
-eta = 1e-30  # viscosidade dinâmica do meio (ex: água ~1e-3 Pa.s)
-raio = 5e-2  # raio da partícula (mesmo que o raio do sphere)
-gama = 6 * pi * eta * raio  # coeficiente de resistência de Stokes
+    # Campo elétrico gerador da corrente
+    A = w * d
+    J = i / A
+    E_intensidade = J / sigma
 
-# Estado dos campos
-campo_eletrico_ativo = True
-campo_magnetico_ativo = True
+    E = vector(-E_intensidade, 0, 0)
+    B = vector(0, B_intensidade, 0)
 
-# Funções dos botões
+    # ========== Visualização ==========
+    scene = canvas(title="Efeito Hall com Campo Elétrico Dinâmico",
+                width=800, height=600)
+
+    # Condutor e placas
+    bloco = box(pos=vector(0, 0, 0), size=vector(
+        10e-3, 1e-3, 2e-3), color=color.gray(0.6), opacity=0.3)
+    placa_esquerda = box(pos=vector(0, 0, -1e-3), size=vector(10e-3,
+                        1e-3, 0.1e-3), color=color.blue, opacity=0.5)
+    placa_direita = box(pos=vector(0, 0,  1e-3), size=vector(10e-3,
+                        1e-3, 0.1e-3), color=color.red,  opacity=0.5)
+
+    # Listas de elétrons
+    eletrons_moveis = []
+    eletrons_acumulados = []
+
+    # Contadores de carga acumulada
+    n_esquerda = 0
+    n_direita = 0
+
+    # ========== Criação de elétrons ==========
+
+    def criar_eletron():
+        e = sphere(
+            pos=vector(-5e-3, 0, 0),
+            radius=0.1e-5,
+            color=color.cyan,
+            make_trail=True
+        )
+        e.vel = v0
+        eletrons_moveis.append(e)
 
 
-def toggle_campo_eletrico():
-    global campo_eletrico_ativo
-    campo_eletrico_ativo = not campo_eletrico_ativo
-    botao_campo_eletrico.text = "Desligar Campo Elétrico" if campo_eletrico_ativo else "Ligar Campo Elétrico"
+    # ========== Estado dos campos ==========
+    campo_eletrico_ativo = True
+    campo_magnetico_ativo = True
 
+    def toggle_campo_eletrico():
+        global campo_eletrico_ativo
+        campo_eletrico_ativo = not campo_eletrico_ativo
+        botao_campo_eletrico.text = "Desligar Campo Elétrico" if campo_eletrico_ativo else "Ligar Campo Elétrico"
 
-def toggle_campo_magnetico():
-    global campo_magnetico_ativo
-    campo_magnetico_ativo = not campo_magnetico_ativo
-    botao_campo_magnetico.text = "Desligar Campo Magnético" if campo_magnetico_ativo else "Ligar Campo Magnético"
+    def toggle_campo_magnetico():
+        global campo_magnetico_ativo
+        campo_magnetico_ativo = not campo_magnetico_ativo
+        botao_campo_magnetico.text = "Desligar Campo Magnético" if campo_magnetico_ativo else "Ligar Campo Magnético"
 
+    # Botões
+    botao_campo_eletrico = button(
+        text="Desligar Campo Elétrico", bind=lambda _: toggle_campo_eletrico())
+    botao_campo_magnetico = button(
+        text="Desligar Campo Magnético", bind=lambda _: toggle_campo_magnetico())
 
-# Interface: botões
-botao_campo_eletrico = button(
-    text="Desligar Campo Elétrico", bind=lambda _: toggle_campo_eletrico())
-botao_campo_magnetico = button(
-    text="Desligar Campo Magnético", bind=lambda _: toggle_campo_magnetico())
+    # ========== Loop de simulação ==========
+    tempo_inicial = time.time()
+    intervalo_geracao = 0.5  # segundos
 
+    while True:
+        rate(500)
 
-# Loop de simulação
-while True:
-    rate(300)
+        # Geração periódica de elétrons
+        if time.time() - tempo_inicial > intervalo_geracao:
+            criar_eletron()
+            tempo_inicial = time.time()
 
-    e.pos += v * dt
+        # Atualiza movimento
+        for e in eletrons_moveis[:]:
+            # Força elétrica (externa)
+            F_elet = q * E if campo_eletrico_ativo else vector(0, 0, 0)
 
-    # Forças
-    F_elet = q * E if campo_eletrico_ativo else vector(0, 0, 0)
-    F_mag = q * cross(v, B) if campo_magnetico_ativo else vector(0, 0, 0)
-    F_res = -gama * v
+            # Força magnética
+            F_mag = q * cross(e.vel, B) if campo_magnetico_ativo  else vector(0, 0, 0)
+                
+            # Campo Hall dinâmico
+            delta_n = n_direita - n_esquerda
+            # Campo Hall real (a partir do acúmulo de carga)
+            L = 5e-3  # comprimento lateral (x)
+            A_face = L * w   # área da face onde há acúmulo
+            sigma_s = (abs(q) * 1e3 * delta_n) / A_face  # densidade por área
+            epsilon_0 = 8.85e-12  # permissividade do vácuo
+            E_hall = vector(0, 0, sigma_s / epsilon_0)
 
-    F_tot = F_elet + F_mag + F_res
-    a = F_tot / m
-    v += a * dt
+            # Força de Hall efetiva
+            F_elet_hall = q * E_hall
 
-    # Condição de reinício: se sair dos limites da caixa
-    if abs(e.pos.x) > bloco.size.x/2 or abs(e.pos.y) > bloco.size.y/2 or abs(e.pos.z) > bloco.size.z/2:
-        e.pos = vector(-1.5, 0, 0)  # reposiciona
-        v = v0                     # reseta velocidade
-        e.clear_trail()             # limpa o rastro
+            # Movimento
+            a = (F_elet + F_mag + F_elet_hall) / m
+            e.vel += a * dt
+            e.pos += e.vel * dt
+
+            if e.pos.z < -bloco.size.z / 2:
+                n_esquerda += 1
+                eletrons_acumulados.append(e)
+                eletrons_moveis.remove(e)
+                e.visible = False
+            elif e.pos.z > bloco.size.z / 2:
+                n_direita += 1
+                eletrons_acumulados.append(e)
+                eletrons_moveis.remove(e)
+                e.visible = False
+
+            # Fora da área do bloco (em x ou y)
+            if abs(e.pos.x) > bloco.size.x / 2 or abs(e.pos.y) > bloco.size.y / 2:
+                eletrons_moveis.remove(e)
+                e.visible = False
+

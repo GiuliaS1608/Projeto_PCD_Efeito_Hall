@@ -51,7 +51,7 @@ def dados_usuario(n, campo_magnetico_maximo, i, n_portadores, q, t):
     Para dipolos magnéticos tais que a distância é muito maior que qualquer dimensão de sua face aparente:
     B(d) = (μ0/4π) * (μ/d**3), 
     em que μ0 é a permeabilidade magnética no vácuo e μ é o momento dipolar.
-    Consideremos o campo magnético máximo com d = 0,01 m, isto é, 0,01 B.cm.
+    Consideremos o campo magnético máximo com d = 0,01 m, isto é, um valor x T.cm³.
     """
     
     campos_por_distancia = {}

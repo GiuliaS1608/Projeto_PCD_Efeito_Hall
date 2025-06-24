@@ -142,6 +142,13 @@ Onde:
 
 - UNIVERSIDADE FEDERAL DO RIO GRANDE DO SUL. O efeito Hall. Instituto de Física – FIS142, módulo 8. 2004. Disponível em: https://www.if.ufrgs.br/tex/fis142/mod08/m_s03.html. Acesso em: 24 jun. 2025.
 
+- SANTOS, Ronilson Sousa.
+Análise experimental do efeito Hall em semicondutores. 2023. Trabalho de Conclusão de Curso (Graduação em Física) - Universidade Federal do Tocantins, Porto Nacional, 2023.
+Disponível em: https://umbu.uft.edu.br/bitstream/11612/6356/1/RONILSON%20SOUSA%20SANTOS-TCC-F%c3%8dSICA.pdf.
+Acesso em: 11 jun. 2025.
+
+
+
 ---
 ## Professores orientadores
 
@@ -202,7 +209,7 @@ Onde:
 
 - Edélio Gabriel Magalhães de Jesus: criação da simulação 3d do efeito Hall
 - Gisela Ceresér Kassick: programação do Arduino e do código de medição e recebimentos de dados experimentais
-- Giulia Salles Ferreira: criação do código de recebimento de dados teóricos e plotagem de gráficos
+- Giulia Sales Ferreira: criação do código de recebimento de dados teóricos e plotagem de gráficos
 - Leonardo Ritchielly dos S Vieira: criação da interface do código do Glowscript
 
 Os documentos do trabalho (Readme, pdfs explicativos e apresentação) foram feito em conjunto pelo grupo.

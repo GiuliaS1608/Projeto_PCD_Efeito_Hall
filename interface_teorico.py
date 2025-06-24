@@ -228,6 +228,7 @@ while True:
         key_grafico_livre = False
         ha_grafico_livre = True
 
+        
     
 ##### Simulação Geral - Escopo
     if escopo_simulacao == True:            

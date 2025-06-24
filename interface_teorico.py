@@ -261,7 +261,7 @@ while True:
 
     # ========== Loop de simulação ==========
         tempo_inicial = clock()
-        intervalo_geracao = 1  # segundos
+        intervalo_geracao = 0.5  # segundos
         
         key_simulacao = True
         escopo_simulacao = False

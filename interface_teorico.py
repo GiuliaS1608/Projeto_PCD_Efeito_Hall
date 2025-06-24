@@ -75,7 +75,7 @@ def plotar_graficos(distancias, campos_por_distancia, dados_tensao, campo_magnet
         tensao = dados_tensao[d][0] if dados_tensao[d] else 0
         curva2.plot(d, tensao)
 
-############################ Funções Internas e de Botões ############################        
+############################ Funções dos Botões ############################        
     
 ### Modo Livre
 def mestre_livre():

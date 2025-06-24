@@ -156,8 +156,9 @@ def iniciar_simulacao():
     resetar_livre.disabled = False
 
 def resetar_simulacao():
-    global key_simulacao, campo_eletrico_ativo, campo_magnetico_ativo
+    global key_simulacao, ha_objetos, campo_eletrico_ativo, campo_magnetico_ativo
     key_simulacao = False
+    ha_objetos = False
     iniciar_livre.disabled = False
     resetar_livre.disabled = True
     opt_campo_eletrico.checked = True

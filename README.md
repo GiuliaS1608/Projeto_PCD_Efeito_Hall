@@ -20,7 +20,7 @@
 - [Como Executar](#como-executar)
 - [Especificações Técnicas](#especificações-técnicas)
 - [Referências](#referências)
-- [Professores orientadores](#professoresorientadores)
+- [Professores orientadores](#professores-orientadores)
 - [Contribuições da Equipe](#contribuições-da-equipe)
 
 ---
